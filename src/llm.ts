@@ -1,42 +1,51 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import * as os from "node:os";
 
-export function loadEnv(root: string = process.cwd()): void {
-  const envPath = path.join(root, ".env");
-  try {
-    const nodeProcess = process as unknown as { loadEnvFile?: (path?: string) => void };
-    if (typeof nodeProcess.loadEnvFile === "function") {
-      nodeProcess.loadEnvFile(envPath);
-      return;
+function parseEnvContent(content: string): void {
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eqIdx = trimmed.indexOf("=");
+    if (eqIdx > 0) {
+      const key = trimmed.slice(0, eqIdx).trim();
+      let val = trimmed.slice(eqIdx + 1).trim();
+      if (
+        (val.startsWith('"') && val.endsWith('"')) ||
+        (val.startsWith("'") && val.endsWith("'"))
+      ) {
+        val = val.slice(1, -1);
+      }
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
     }
-  } catch {
-    // proceed to fallback
   }
+}
 
+function tryLoadEnvFile(envPath: string): void {
   try {
     if (fs.existsSync(envPath)) {
       const content = fs.readFileSync(envPath, "utf-8");
-      for (const line of content.split(/\r?\n/)) {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) continue;
-        const eqIdx = trimmed.indexOf("=");
-        if (eqIdx > 0) {
-          const key = trimmed.slice(0, eqIdx).trim();
-          let val = trimmed.slice(eqIdx + 1).trim();
-          if (
-            (val.startsWith('"') && val.endsWith('"')) ||
-            (val.startsWith("'") && val.endsWith("'"))
-          ) {
-            val = val.slice(1, -1);
-          }
-          if (!process.env[key]) {
-            process.env[key] = val;
-          }
-        }
-      }
+      parseEnvContent(content);
     }
   } catch {
     // ignore
+  }
+}
+
+export function loadEnv(root: string = process.cwd()): void {
+  // 1. Current working directory / project .env (highest priority)
+  tryLoadEnvFile(path.join(root, ".env"));
+
+  // 2. Global user home directory fallbacks (~/.commit-notes/.env, ~/.commit-notes.env, ~/.env)
+  try {
+    const homeDir = os.homedir();
+    tryLoadEnvFile(path.join(homeDir, ".commit-notes", ".env"));
+    tryLoadEnvFile(path.join(homeDir, ".commit-notes.env"));
+    tryLoadEnvFile(path.join(homeDir, ".env"));
+  } catch {
+    // ignore home directory resolution errors
   }
 }
 
@@ -64,7 +73,7 @@ export class GeminiProvider implements LLMProvider {
     const key = options.apiKey ?? process.env.GEMINI_API_KEY;
     if (!key || key.trim() === "") {
       throw new Error(
-        "Missing GEMINI_API_KEY environment variable. Please set GEMINI_API_KEY in your environment or in a .env file."
+        "Missing GEMINI_API_KEY environment variable. Please set GEMINI_API_KEY in your system environment, in ~/.commit-notes/.env, or in a local .env file."
       );
     }
     this.apiKey = key.trim();
