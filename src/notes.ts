@@ -292,7 +292,7 @@ export function createConceptMarkdown(
   }
 
   return `---
-tags: [commit-notes, ${difficulty}]
+tags: [ink, ${difficulty}]
 created: ${dateStr}
 ${aliasLine}---
 # ${name}

@@ -38,11 +38,11 @@ export function loadEnv(root: string = process.cwd()): void {
   // 1. Current working directory / project .env (highest priority)
   tryLoadEnvFile(path.join(root, ".env"));
 
-  // 2. Global user home directory fallbacks (~/.commit-notes/.env, ~/.commit-notes.env, ~/.env)
+  // 2. Global user home directory fallbacks (~/.ink/.env, ~/.ink.env, ~/.env)
   try {
     const homeDir = os.homedir();
-    tryLoadEnvFile(path.join(homeDir, ".commit-notes", ".env"));
-    tryLoadEnvFile(path.join(homeDir, ".commit-notes.env"));
+    tryLoadEnvFile(path.join(homeDir, ".ink", ".env"));
+    tryLoadEnvFile(path.join(homeDir, ".ink.env"));
     tryLoadEnvFile(path.join(homeDir, ".env"));
   } catch {
     // ignore home directory resolution errors
@@ -73,7 +73,7 @@ export class GeminiProvider implements LLMProvider {
     const key = options.apiKey ?? process.env.GEMINI_API_KEY;
     if (!key || key.trim() === "") {
       throw new Error(
-        "Missing GEMINI_API_KEY environment variable. Please set GEMINI_API_KEY in your system environment, in ~/.commit-notes/.env, or in a local .env file."
+        "Missing GEMINI_API_KEY environment variable. Please set GEMINI_API_KEY in your system environment, in ~/.ink/.env, or in a local .env file."
       );
     }
     this.apiKey = key.trim();

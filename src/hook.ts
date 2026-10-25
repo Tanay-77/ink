@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 
-export const HOOK_START_MARKER = "# --- COMMIT-NOTES HOOK START ---";
-export const HOOK_END_MARKER = "# --- COMMIT-NOTES HOOK END ---";
+export const HOOK_START_MARKER = "# --- ink HOOK START ---";
+export const HOOK_END_MARKER = "# --- ink HOOK END ---";
 
 export function generateHookBlock(): string {
   return [
@@ -12,7 +12,7 @@ export function generateHookBlock(): string {
     '  case "$COMMIT_MSG" in',
     "    Merge*) ;;",
     "    *)",
-    "      (commit-notes run HEAD >> .commit-notes.log 2>&1 &)",
+    "      (ink run HEAD >> .ink.log 2>&1 &)",
     "      ;;",
     "  esac",
     "fi",

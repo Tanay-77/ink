@@ -74,9 +74,9 @@ ${item.question}
 
   return `---
 date: ${dateStr}
-type: commit-notes-quiz
+type: ink-quiz
 totalQuestions: ${items.length}
-tags: [commit-notes, quiz]
+tags: [ink, quiz]
 ---
 # 🧠 Daily Review Quiz — ${dateStr}
 
@@ -245,7 +245,7 @@ export async function runQuizSession(
   const cards = await loadProgressCards(config.vaultPath);
 
   if (cards.length === 0) {
-    console.log("No concepts found in your vault. Run 'commit-notes run' first to generate study notes.");
+    console.log("No concepts found in your vault. Run 'ink run' first to generate study notes.");
     return;
   }
 
@@ -338,7 +338,7 @@ export async function runQuizSession(
 
     // Optionally auto-open the quiz note on Windows
     if (options.openFile !== false && process.platform === "win32") {
-      execFile("cmd", ["/c", "start", "", quizFilePath], { windowsHide: true }, () => {});
+      execFile("cmd", ["/c", "start", "", quizFilePath], { windowsHide: true }, () => { });
     }
 
     return;

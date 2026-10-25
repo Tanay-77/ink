@@ -64,7 +64,7 @@ describe("parseConceptFile", () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "commit-notes-concept-test-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "ink-concept-test-"));
   });
 
   afterEach(async () => {
@@ -76,7 +76,7 @@ describe("parseConceptFile", () => {
   it("extracts title, explanation, and interview question", async () => {
     const filePath = path.join(tempDir, "exponential-backoff.md");
     const content = `---
-tags: [commit-notes, intermediate]
+tags: [ink, intermediate]
 created: 2026-10-22
 ---
 # Exponential Backoff
@@ -101,7 +101,7 @@ Spreads out retry intervals to avoid overwhelming the server.
   it("extracts interview question and answer when QA format is present", async () => {
     const filePath = path.join(tempDir, "zod-schema.md");
     const content = `---
-tags: [commit-notes, basic]
+tags: [ink, basic]
 created: 2026-10-22
 ---
 # Zod Schema Validation
@@ -129,7 +129,7 @@ describe("loadProgressCards and sync", () => {
   let tempVault: string;
 
   beforeEach(async () => {
-    tempVault = await fs.mkdtemp(path.join(os.tmpdir(), "commit-notes-quiz-vault-"));
+    tempVault = await fs.mkdtemp(path.join(os.tmpdir(), "ink-quiz-vault-"));
     await fs.mkdir(path.join(tempVault, "concepts"), { recursive: true });
   });
 
@@ -161,7 +161,7 @@ describe("runQuizSession integration", () => {
   let tempVault: string;
 
   beforeEach(async () => {
-    tempVault = await fs.mkdtemp(path.join(os.tmpdir(), "commit-notes-quiz-session-"));
+    tempVault = await fs.mkdtemp(path.join(os.tmpdir(), "ink-quiz-session-"));
     await fs.mkdir(path.join(tempVault, "concepts"), { recursive: true });
   });
 

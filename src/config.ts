@@ -2,7 +2,7 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { z } from "zod";
 
-export const CONFIG_FILE_NAME = ".commit-notes.json";
+export const CONFIG_FILE_NAME = ".ink.json";
 
 export const ConfigSchema = z.object({
   vaultPath: z.string().min(1, "vaultPath is required"),
@@ -27,7 +27,7 @@ export async function loadConfig(repoRoot: string = process.cwd()): Promise<Conf
     return ConfigSchema.parse(parsed);
   } catch (error: unknown) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-      throw new Error(`Configuration file not found at "${configPath}". Run "commit-notes init" first.`);
+      throw new Error(`Configuration file not found at "${configPath}". Run "ink init" first.`);
     }
     throw error;
   }

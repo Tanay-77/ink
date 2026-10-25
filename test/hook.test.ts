@@ -26,7 +26,7 @@ describe("hook script generation", () => {
     expect(block).toContain('if [ "$COMMIT_NOTES_SKIP" != "1" ]; then');
     expect(block).toContain("COMMIT_MSG=$(git log -1 --pretty=%s 2>/dev/null)");
     expect(block).toContain("Merge*) ;;");
-    expect(block).toContain("(commit-notes run HEAD >> .commit-notes.log 2>&1 &)");
+    expect(block).toContain("(ink run HEAD >> .ink.log 2>&1 &)");
   });
 });
 
@@ -34,7 +34,7 @@ describe("installHook & uninstallHook in temp repository", () => {
   let tempRepo: string;
 
   beforeEach(async () => {
-    tempRepo = await fs.mkdtemp(path.join(os.tmpdir(), "commit-notes-hook-test-"));
+    tempRepo = await fs.mkdtemp(path.join(os.tmpdir(), "ink-hook-test-"));
     // Create .git directory
     await fs.mkdir(path.join(tempRepo, ".git"), { recursive: true });
   });
@@ -95,7 +95,7 @@ describe("installHook & uninstallHook in temp repository", () => {
     expect(updatedContent).not.toContain("\r");
   });
 
-  it("uninstalls hook by deleting file when it only contains commit-notes", async () => {
+  it("uninstalls hook by deleting file when it only contains ink", async () => {
     await installHook(tempRepo);
     const result = await uninstallHook(tempRepo);
 

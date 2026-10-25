@@ -61,7 +61,7 @@ describe("Duplicate Detection (3 Layers)", () => {
   });
 
   it("Layer 3: detects fuzzy match with typo and logs merge", () => {
-    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => { });
     // Typo in "Exponetial" + token overlap
     const match = findMatchingConcept("Exponetial Backoff", existingList, 0.7);
 
@@ -81,7 +81,7 @@ describe("saveNotes integration & idempotency in temp directory", () => {
   let tempVault: string;
 
   beforeEach(async () => {
-    tempVault = await fs.mkdtemp(path.join(os.tmpdir(), "commit-notes-vault-"));
+    tempVault = await fs.mkdtemp(path.join(os.tmpdir(), "ink-vault-"));
   });
 
   afterEach(async () => {
@@ -192,7 +192,7 @@ describe("saveNotes integration & idempotency in temp directory", () => {
   it("adds alias in frontmatter when Layer 3 merges concept name", async () => {
     await saveNotes(tempVault, sampleCommit, sampleAnalysis);
 
-    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => { });
 
     // Commit with typo in concept name
     const typoCommit: CommitData = {

@@ -1,10 +1,10 @@
 {
-  "name": "commit-notes",
+  "name": "ink",
   "version": "0.1.0",
   "description": "CLI tool that turns Git commits into structured Markdown study notes",
   "type": "module",
   "bin": {
-    "commit-notes": "./dist/cli.js"
+    "ink": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",

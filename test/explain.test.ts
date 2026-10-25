@@ -97,7 +97,7 @@ describe("trackUsage & updateProgress in vault", () => {
   let tempVault: string;
 
   beforeEach(async () => {
-    tempVault = await fs.mkdtemp(path.join(os.tmpdir(), "commit-notes-explain-test-"));
+    tempVault = await fs.mkdtemp(path.join(os.tmpdir(), "ink-explain-test-"));
   });
 
   afterEach(async () => {
@@ -212,7 +212,7 @@ describe("runExplainSession integration", () => {
   let tempVault: string;
 
   beforeEach(async () => {
-    tempRepo = await fs.mkdtemp(path.join(os.tmpdir(), "commit-notes-explain-repo-"));
+    tempRepo = await fs.mkdtemp(path.join(os.tmpdir(), "ink-explain-repo-"));
     tempVault = path.join(tempRepo, "vault");
     await fs.mkdir(tempVault, { recursive: true });
 

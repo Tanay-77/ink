@@ -17,13 +17,13 @@ loadEnv();
 const program = new Command();
 
 program
-  .name("commit-notes")
+  .name("ink")
   .description("Turn Git commits into structured Markdown study notes")
   .version("0.1.0");
 
 program
   .command("init")
-  .description("Initialize .commit-notes.json configuration for the current repository")
+  .description("Initialize .ink.json configuration for the current repository")
   .action(async () => {
     const rl = readline.createInterface({ input, output });
     try {
@@ -170,11 +170,11 @@ program
     try {
       const result = await installHook();
       if (result.action === "already-installed") {
-        console.log(`commit-notes hook is already installed in "${result.hookPath}".`);
+        console.log(`ink hook is already installed in "${result.hookPath}".`);
       } else if (result.action === "appended") {
-        console.log(`commit-notes hook safely appended to existing "${result.hookPath}".`);
+        console.log(`ink hook safely appended to existing "${result.hookPath}".`);
       } else {
-        console.log(`commit-notes hook successfully created at "${result.hookPath}".`);
+        console.log(`ink hook successfully created at "${result.hookPath}".`);
       }
     } catch (err: unknown) {
       console.error("Failed to install hook:", err instanceof Error ? err.message : err);
@@ -184,16 +184,16 @@ program
 
 program
   .command("uninstall-hook")
-  .description("Remove commit-notes from .git/hooks/post-commit")
+  .description("Remove ink from .git/hooks/post-commit")
   .action(async () => {
     try {
       const result = await uninstallHook();
       if (result.action === "not-installed") {
-        console.log("No commit-notes hook was found to uninstall.");
+        console.log("No ink hook was found to uninstall.");
       } else if (result.action === "removed") {
-        console.log(`commit-notes post-commit hook removed from "${result.hookPath}".`);
+        console.log(`ink post-commit hook removed from "${result.hookPath}".`);
       } else {
-        console.log(`commit-notes hook removed; preserved remaining hooks in "${result.hookPath}".`);
+        console.log(`ink hook removed; preserved remaining hooks in "${result.hookPath}".`);
       }
     } catch (err: unknown) {
       console.error("Failed to uninstall hook:", err instanceof Error ? err.message : err);

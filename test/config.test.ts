@@ -53,7 +53,7 @@ describe("saveConfig & loadConfig", () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "commit-notes-test-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "ink-test-"));
   });
 
   afterEach(async () => {
@@ -79,6 +79,6 @@ describe("saveConfig & loadConfig", () => {
   });
 
   it("throws clear error when config file does not exist", async () => {
-    await expect(loadConfig(tempDir)).rejects.toThrow("Run \"commit-notes init\" first");
+    await expect(loadConfig(tempDir)).rejects.toThrow("Run \"ink init\" first");
   });
 });
