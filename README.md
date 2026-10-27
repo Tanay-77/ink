@@ -1,15 +1,34 @@
-# ink 🧠⚡
+<p align="center">
+  <img src="logo.png" alt="ink logo" width="120" />
+</p>
 
-> **Turn Everyday Git Commits into Obsidian Study Notes & Interactive Technical Interview Quizzes.**
+<h1 align="center">ink</h1>
 
-`ink` is an open-source CLI companion that parses your Git diffs and automatically generates structured Markdown study notes in your local [Obsidian](https://obsidian.md) vault. It extracts architectural decisions, trade-offs, and spaced-repetition flashcards (SM-2 algorithm) so you retain what you build and can articulate your choices effortlessly in system design interviews.
+<p align="center">
+  Turn everyday Git commits into Obsidian study notes and interview flashcards.
+</p>
+
+<p align="center">
+  <a href="https://github.com/Tanay-77/ink">GitHub</a> · 
+  <a href="https://github.com/Tanay-77/ink/issues">Issues</a> ·
+  <a href="#commands">Commands</a>
+</p>
 
 ---
 
-## ⚡ Quickstart (Set Up in Under 2 Minutes)
+## What is ink?
 
-### 1. Install & Link Globally
-Clone this repository to your computer, compile the TypeScript source, and register the global CLI symlink:
+ink is a command-line tool that reads your Git diffs and turns them into clean Markdown notes inside your Obsidian vault. It pulls out the key concepts, architecture decisions, and trade-offs from every commit you make.
+
+It also generates spaced-repetition quiz cards using the SM-2 algorithm so you actually remember what you built — useful for code reviews, technical interviews, or just staying sharp.
+
+No frameworks. No browser. Just your terminal, Git, and Obsidian.
+
+---
+
+## Setup
+
+### 1. Clone and install
 
 ```bash
 git clone https://github.com/Tanay-77/ink.git
@@ -19,133 +38,119 @@ npm run build
 npm link
 ```
 
-> **Why `npm link`?**  
-> Running `npm link` registers `ink` as a global command in your system `$PATH`. You can now open any terminal and run `ink` in **any** project repository across your machine.
+`npm link` registers `ink` as a global command. After this, you can run `ink` from any project folder on your machine.
 
----
+### 2. Add your API key
 
-### 2. Set Your API Key Once (No `.env` Copying)
-You **never** have to copy a `.env` file into your individual coding repositories. Save your API key once in your user home folder:
+ink uses an LLM to analyze your diffs. Save your key once and it works everywhere.
 
-#### Option A: User Home Config (Recommended)
-Create `~/.ink/.env` (Windows: `C:\Users\<YourUser>\.ink\.env`):
+Create a file at `~/.ink/.env` (on Windows: `C:\Users\<you>\.ink\.env`):
+
+```
+API_KEY=your_key_here
+```
+
+Or set it as a system environment variable:
 
 ```bash
 # macOS / Linux
-mkdir -p ~/.ink
-echo "GEMINI_API_KEY=your_gemini_api_key_here" > ~/.ink/.env
-
-# Windows (PowerShell)
-mkdir ~/.ink -Force
-Set-Content ~/.ink/.env "GEMINI_API_KEY=your_gemini_api_key_here"
+export API_KEY="your_key_here"
 ```
 
-#### Option B: System Environment Variable
-- **Windows (PowerShell)**:
-  ```powershell
-  [System.Environment]::SetEnvironmentVariable('GEMINI_API_KEY', 'your_key_here', 'User')
-  ```
-- **macOS / Linux**:
-  Add to `~/.bashrc` or `~/.zshrc`:
-  ```bash
-  export GEMINI_API_KEY="your_key_here"
-  ```
+```powershell
+# Windows PowerShell
+[System.Environment]::SetEnvironmentVariable('API_KEY', 'your_key_here', 'User')
+```
 
----
+You do not need to copy `.env` files into each project. ink finds the key automatically.
 
-### 3. Initialize in Any Project
-Navigate into **any Git repository** you want to take study notes for, and run:
+### 3. Initialize in any project
+
+Go to any Git repo and run:
 
 ```bash
-cd ~/my-favorite-project
 ink init
 ```
 
-The interactive wizard will ask for:
-1. **Obsidian Vault Path**: (e.g., `~/Documents/ObsidianVault` or `C:/Users/name/ObsidianVault`)
-2. **Provider**: `gemini` (default), `anthropic`, or `openai`
-3. **Model**: `gemini-2.0-flash` (or `claude-3-5-sonnet`, `gpt-4o`)
+It asks for:
+- Your Obsidian vault path (e.g. `~/Documents/MyVault`)
+- LLM provider (`gemini`, `anthropic`, or `openai`)
+- Model name (e.g. `gemini-2.0-flash`)
 
-It writes a lightweight `.ink.json` in that project root.
+This creates a small `.ink.json` config in that project folder.
 
 ---
 
-## 🛠️ CLI Commands Guide
+<h2 id="commands">Commands</h2>
 
-| Command | Mode | Description |
-| :--- | :--- | :--- |
-| `ink init` | Setup | Configures `.ink.json` pointing to your Obsidian vault |
-| `ink run [sha]` | On-Demand | Generates a study note for `HEAD` or a specific commit hash |
-| `ink install-hook` | Automation | Installs background post-commit hook for 100% silent automation |
-| `ink uninstall-hook` | Automation | Removes the background Git post-commit hook |
-| `ink quiz` | Study | Reviews today's spaced-repetition (SM-2) concept quiz |
-| `ink explain [sha]` | Interview | Practice technical interview explain-back mode (graded 0-5) |
+| Command | What it does |
+| :--- | :--- |
+| `ink init` | Set up ink for the current project |
+| `ink run [sha]` | Generate a study note for a commit (defaults to HEAD) |
+| `ink install-hook` | Auto-generate notes on every `git commit` in the background |
+| `ink uninstall-hook` | Remove the auto hook |
+| `ink quiz` | Review today's spaced-repetition flashcards |
+| `ink explain [sha]` | Practice explaining a commit out loud, scored 0-5 |
 
-### On-Demand Note Generation
+### Generate a note
+
 ```bash
-# Generate study note for the latest commit
 ink run HEAD
-
-# Generate study note for a past commit
 ink run a1b2c3d
 ```
 
-### 100% Automated Background Hook
-Don't want to run commands manually? Turn on the silent Git hook:
+### Auto-generate on every commit
+
 ```bash
 ink install-hook
 ```
-Every time you run `git commit -m "..."`, note generation runs as an asynchronous background worker. Your Git commit finishes in milliseconds without waiting.
 
-### Daily Active Recall (Spaced Repetition)
+After this, every time you run `git commit`, ink generates a note silently in the background. Your commit finishes instantly.
+
+### Daily quiz
+
 ```bash
 ink quiz
 ```
-Pulls concepts due for review today according to the SuperMemo-2 (SM-2) algorithm. Answers are hidden until clicked/revealed.
 
-### Technical Interview Simulator
+Shows concepts due for review today based on the SM-2 spaced repetition algorithm.
+
+### Interview practice
+
 ```bash
 ink explain HEAD
 ```
-Puts you on the spot to articulate why you made changes in your latest commit. Evaluates your explanation from 0 to 5 on clarity, architectural intent, and potential edge cases.
+
+You explain what you changed and why. ink scores your answer from 0 to 5 on clarity, architecture reasoning, and edge cases.
 
 ---
 
-## 🗂️ Multi-Repository & Obsidian Vault Structure
+## Vault structure
 
-You can run `ink init` across all your separate coding repositories. They all funnel clean Markdown notes into your central Obsidian vault:
+All your notes go into one central Obsidian vault. You can run `ink init` in as many repos as you want — they all write to the same vault.
 
-```text
-MyObsidianVault/
-├── commits/
-│   ├── 2026-10-24-feat-auth-middleware.md
-│   └── 2026-10-25-refactor-database-queries.md
-├── concepts/
-│   ├── JWT-Blacklisting.md
-│   └── Connection-Pool-Exhaustion.md
-└── quizzes/
-    └── 2026-10-24-daily-quiz.md
+```
+MyVault/
+  commits/
+    2026-10-24-feat-auth-middleware.md
+    2026-10-25-refactor-database-queries.md
+  concepts/
+    JWT-Blacklisting.md
+    Connection-Pool-Exhaustion.md
+  quizzes/
+    2026-10-24-daily-quiz.md
 ```
 
-Inside Obsidian, concepts are connected via `[[wikilinks]]`, creating an interconnected knowledge graph of everything you've ever built across different codebases!
+Concepts are linked with `[[wikilinks]]` so they form a connected knowledge graph across all your projects.
 
 ---
 
-## 🌐 Web Showcase & Full Documentation
+## Who is this for?
 
-This repository includes a Next.js web application and interactive documentation:
-
-```bash
-cd web
-npm install
-npm run dev
-```
-
-Visit:
-- **Landing Page & Action Demo**: [http://localhost:3000](http://localhost:3000)
-- **Interactive Documentation**: [http://localhost:3000/docs](http://localhost:3000/docs)
+If you code with AI and ship fast but then struggle to explain what you built in interviews or code reviews — ink is for you. It makes sure you deeply understand every commit, not just ship it.
 
 ---
 
-## 📄 License
-MIT License. Created by [Tanay Mahajan](https://github.com/Tanay-77).
+## License
+
+MIT License. Built by [Tanay Mahajan](https://github.com/Tanay-77).
