@@ -196,16 +196,21 @@ describe("analyzeCommit with FakeLLMProvider", () => {
 
 describe("GeminiProvider missing key check", () => {
   it("throws clear error when GEMINI_API_KEY is not set", () => {
-    const originalKey = process.env.GEMINI_API_KEY;
+    const originalGemini = process.env.GEMINI_API_KEY;
+    const originalApi = process.env.API_KEY;
     delete process.env.GEMINI_API_KEY;
+    delete process.env.API_KEY;
 
     try {
       expect(() => new GeminiProvider({ apiKey: "" })).toThrow(
         "Missing GEMINI_API_KEY environment variable"
       );
     } finally {
-      if (originalKey) {
-        process.env.GEMINI_API_KEY = originalKey;
+      if (originalGemini) {
+        process.env.GEMINI_API_KEY = originalGemini;
+      }
+      if (originalApi) {
+        process.env.API_KEY = originalApi;
       }
     }
   });

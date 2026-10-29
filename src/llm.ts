@@ -53,6 +53,38 @@ export interface LLMProvider {
   complete(system: string, user: string): Promise<string>;
 }
 
+/** Maps each provider name to its expected environment variable. */
+const PROVIDER_ENV_KEYS: Record<string, string> = {
+  gemini: "GEMINI_API_KEY",
+  anthropic: "ANTHROPIC_API_KEY",
+  openai: "OPENAI_API_KEY",
+};
+
+/**
+ * Resolves the API key for a given provider.
+ * Checks (in order): explicit key → provider-specific env var → generic API_KEY.
+ * Throws a clear, provider-specific error if nothing is found.
+ */
+export function resolveApiKey(
+  provider: "gemini" | "anthropic" | "openai",
+  explicitKey?: string
+): string {
+  if (!explicitKey) {
+    loadEnv();
+  }
+
+  const envVarName = PROVIDER_ENV_KEYS[provider] ?? "API_KEY";
+  const key = explicitKey ?? process.env[envVarName] ?? process.env.API_KEY;
+
+  if (!key || key.trim() === "") {
+    throw new Error(
+      `Missing ${envVarName} environment variable. Please set ${envVarName} (or API_KEY) in your system environment, in ~/.ink/.env, or in a local .env file.`
+    );
+  }
+
+  return key.trim();
+}
+
 export interface GeminiProviderOptions {
   apiKey?: string;
   model?: string;
@@ -67,16 +99,7 @@ export class GeminiProvider implements LLMProvider {
   private readonly baseDelayMs: number;
 
   constructor(options: GeminiProviderOptions = {}) {
-    if (!options.apiKey) {
-      loadEnv();
-    }
-    const key = options.apiKey ?? process.env.GEMINI_API_KEY;
-    if (!key || key.trim() === "") {
-      throw new Error(
-        "Missing GEMINI_API_KEY environment variable. Please set GEMINI_API_KEY in your system environment, in ~/.ink/.env, or in a local .env file."
-      );
-    }
-    this.apiKey = key.trim();
+    this.apiKey = resolveApiKey("gemini", options.apiKey);
     this.model = options.model ?? "gemini-3.5-flash-lite";
     this.maxRetries = options.maxRetries ?? 3;
     this.baseDelayMs = options.baseDelayMs ?? 1000;
@@ -161,6 +184,10 @@ export function createLLMProvider(
   provider: "gemini" | "anthropic" | "openai" = "gemini",
   model?: string
 ): LLMProvider {
+  // Validate the API key early so the error message is provider-specific
+  // (e.g. "Missing OPENAI_API_KEY" instead of a generic message)
+  resolveApiKey(provider);
+
   if (provider === "gemini") {
     return new GeminiProvider({ model });
   }

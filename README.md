@@ -44,22 +44,14 @@ npm link
 
 ink uses an LLM to analyze your diffs. Save your key once and it works everywhere.
 
-Create a file at `~/.ink/.env` (on Windows: `C:\Users\<you>\.ink\.env`):
-
-```
-API_KEY=your_key_here
-```
-
-Or set it as a system environment variable:
-
+**macOS / Linux:**
 ```bash
-# macOS / Linux
-export API_KEY="your_key_here"
+mkdir -p ~/.ink && echo "API_KEY=your_key_here" > ~/.ink/.env
 ```
 
+**Windows (PowerShell):**
 ```powershell
-# Windows PowerShell
-[System.Environment]::SetEnvironmentVariable('API_KEY', 'your_key_here', 'User')
+mkdir -Force "$HOME\.ink"; Set-Content "$HOME\.ink\.env" "API_KEY=your_key_here"
 ```
 
 You do not need to copy `.env` files into each project. ink finds the key automatically.
